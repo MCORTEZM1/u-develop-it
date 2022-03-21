@@ -1,8 +1,8 @@
 const mysql = require('mysql2');
 const inputCheck = require('./utils/inputCheck');
 const express = require('express');
-const PORT = process.env.PORT || 3001; 
-const app = express(); 
+const PORT = process.env.PORT || 3001;
+const app = express();
 
 // add express middleware 
 app.use(express.urlencoded({ extended: false }));
@@ -17,8 +17,8 @@ const db = mysql.createConnection({
     password: 'password',
     // which database to use 
     database: 'election'
-   },
-   console.log('Connected to the election database.')
+},
+    console.log('Connected to the election database.')
 );
 
 // // db object uses query method which runs SQL query and executes the callback 
@@ -26,10 +26,14 @@ const db = mysql.createConnection({
 
 // GET all candidates 
 app.get('/api/candidates', (req, res) => {
-    const sql = `SELECT * FROM candidates`;
-    
+    const sql = `SELECT candidates.*, parties.name
+                 AS party_name
+                 FROM candidates
+                 LEFT JOIN parties
+                 ON candidates.party_id = parties.id`;
+
     db.query(sql, (err, rows) => {
-        if(err) {
+        if (err) {
             res.status(500).json({ error: err.message });
             return;
         }
@@ -43,16 +47,20 @@ app.get('/api/candidates', (req, res) => {
 
 // // GET a single candidate 
 app.get('/api/candidate/:id', (req, res) => {
-    const sql = `SELECT * FROM candidates WHERE id = ?`;
+    const sql = `SELECT candidates.*, parties.name
+                 AS party_name
+                 FROM candidates
+                 LEFT JOIN parties
+                 ON candidates.party_id = parties.id
+                 WHERE candidates.id = ?`;
     const params = [req.params.id];
 
-
     db.query(sql, params, (err, row) => {
-        if(err) {
+        if (err) {
             res.status(400).json({ error: err.message });
             return;
         }
-        res.json({ 
+        res.json({
             message: 'success',
             data: row
         });
@@ -96,7 +104,7 @@ app.post('/api/candidate', ({ body }, res) => {
     const params = [body.first_name, body.last_name, body.industry_connected];
 
     db.query(sql, params, (err, result) => {
-        if(err) {
+        if (err) {
             res.status(400).json({ error: err.message });
             return;
         }
@@ -119,11 +127,11 @@ app.listen(PORT, () => {
 
 
 /*
-    [] Create and populate a parties table. 
+    [#] Create and populate a parties table. 
        You'll need some party data before you can make progress on any other step.
-    [] Update the candidates table to reference parties. 
+    [#] Update the candidates table to reference parties. 
        Once you have a parties table, you can update the candidates table to reference it.
-    [] Update candidate routes to join with party data. 
+    [#] Update candidate routes to join with party data. 
        Update the existing route to return the combined data.
     [] Create API routes for parties. The routes for parties are fairly straightforward, 
        so it would be helpful to take care of them now.
