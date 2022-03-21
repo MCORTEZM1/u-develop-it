@@ -116,3 +116,17 @@ app.use(((req, res) => {
 app.listen(PORT, () => {
     console.log(`Server is now running on port ${PORT}`);
 });
+
+
+/*
+    [] Create and populate a parties table. 
+       You'll need some party data before you can make progress on any other step.
+    [] Update the candidates table to reference parties. 
+       Once you have a parties table, you can update the candidates table to reference it.
+    [] Update candidate routes to join with party data. 
+       Update the existing route to return the combined data.
+    [] Create API routes for parties. The routes for parties are fairly straightforward, 
+       so it would be helpful to take care of them now.
+    [] Add a candidate route to change their party. 
+       Finally, you can tackle the trickier route of updating an existing record.
+*/
